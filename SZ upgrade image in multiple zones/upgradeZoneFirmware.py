@@ -338,21 +338,12 @@ def removeMemberFromWlanGroup(host, zoneID, WLANgroupID, wlanID, token):
 #	getWLANid(host, zoneID, wlanName, token)
 #	deleteWLAN(host, zoneID, wlanID, token)
 
-
-
-
-
-
-
-
-
-
 # Upgrade firmware in multiple zones
 
 # initial parameters
-host = "10.0.0.98"
-username = "admin"
-password = "ruckus123!"
+host = "A.B.C.D"
+username = "username"
+password = "password"
 numberOfZones = 5
 requiredFirmware = '5.2.0.0.1412'
 
