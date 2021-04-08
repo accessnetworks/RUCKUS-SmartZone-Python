@@ -6,18 +6,18 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 from vSZapi import vSZ_calls
 
 # SmartZone default information
-#host = "10.0.0.98"
-#username = "admin"
-#password = "ruckus123!"
+#host = "A.B.C.D"
+#username = "username"
+#password = "password"
 #domain = "California"
 #zone = "Sausalito"
 #APgroupName = "New Group"
-#proxyAAAname = "AWS Radius Proxy"
-#proxyAAAipAddress = "54.244.215.155"
-#sharedSecret = "testing123"
-#operatorName = "San Mateo County"
-#operatorFriendlyName = "San Mateo County"
-#operatorDomain = "bayarea.roamingid.net"
+#proxyAAAname = "Radius Proxy"
+#proxyAAAipAddress = "A.B.C.D"
+#sharedSecret = "password"
+#operatorName = "Santa Clara County"
+#operatorFriendlyName = "Santa Clara County"
+#operatorDomain = "bayarea.hs20.net"
 #identityProviderName = "OpenRoaming Federation"
 #zoneProfileName = "WBA OR Profile"
 #realmName = "wballiance.com"
@@ -26,9 +26,9 @@ from vSZapi import vSZ_calls
 #wlanName = "OpenRoaming"
 #ssid = 'OpenRoaming'
 #vlanID = 1
-#passphrase = "ruckus123!"
+#passphrase = "password"
 #WISPRportalName = "Solar_System"
-#WISPRportalURL = "https://192.68.0.10/24"
+#WISPRportalURL = "https://A.B.C.D/24"
 
 # Initializing global variables
 token = None
