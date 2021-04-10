@@ -509,7 +509,7 @@ class vSZ_calls:
 	# Delete APgroup
 	def deleteWLANgroup(self, host, zoneID, WLANgroupID, token):
 		url = "https://" + host + ":8443" + "/wsg/api/public/v8_1/rkszones/" + zoneID + "/wlangroups/" + WLANgroupID + "?serviceTicket=" + token
-		print url
+		print (url)
 		r = requests.delete(url, verify=False)
 		return r
 

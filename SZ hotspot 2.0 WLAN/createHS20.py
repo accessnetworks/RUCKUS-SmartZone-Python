@@ -6,12 +6,12 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 from vSZapi import vSZ_calls
 
 # You can change these parameters
-host = "10.0.0.98"
-username = "admin"
-password = "ruckus123!"
+host = "your ip address"
+username = "username"
+password = "password"
 domain = "California"
 zone = "SJC"
-proxyAAAname = "AWS Radius Proxy"
+proxyAAAname = "Radius Proxy"
 operatorName = "San Jose Int'l Airport"
 operatorDomain = "sjairport.com"
 operatorFriendlyName = "San Jose International Airport"
@@ -22,8 +22,8 @@ wlanName = "San Jose Airport HS20 wlan"
 ssid = "SJC_HS20"
 
 # Do not change these parameters
-proxyAAAipAddress = "54.244.215.155"
-sharedSecret = "testing123"
+proxyAAAipAddress = "A.B.C.D"
+sharedSecret = "password"
 realmName = "sjc.airport.net"
 homeOis = "5a03ba0000" 
 
@@ -241,54 +241,7 @@ def addMemberToWlanGroup(host, zoneID, WLANgroupID, wlanID, vlanID, token):
 def removeMemberFromWlanGroup(host, zoneID, WLANgroupID, wlanID, token):
 	response = mySmartZone.removeMemberFromWlanGroup(host, zoneID, WLANgroupID, wlanID, token)
 	print (response)
-
-# List of tasks
-
-#getToken(host, username, password)
-#createDomain(host, domain, token)
-#getDomainID(host, domain, token)
-#getDomains(host, token)
-
-#createZone(host, domainID, zone, token)
-#getZoneID(host, zone, token)
-#getZones(host, token)
-
-#createProxyAAA(host, parentDomainID, proxyAAAname, proxyAAAipAddress, sharedSecret, token)
-#getProxyAAAid(host, parentDomainID, proxyAAAname, token)
-#getProxyAAA(host, proxyAAAid, token)
-
-#createWifiOperator(host, domainID, operatorName, operatorFriendlyName, operatorDomain, token)
-#getWifiOperatorID(host, domainID, operatorName, token)
-#getWifiOperator(host, wifiOperatorID, token)
-
-#createIdentityProvider(host, domainID, identityProviderName, realmName, homeOis, homeOisName, proxyAAAname, token)
-#getIdentityProviderID(host, domainID, identityProviderName, token)
-#getIdentityProvider(host, identityProviderID, token)
-
-#createHS20zoneProfile(host, zoneID, zoneProfileName, wifiOperatorID, identityProviderID, token)
-#getHS20zoneProfileID(host, zoneID, zoneProfileName, token)
-#getHS20zoneProfile(host, zoneID, getHS20zoneProfileID, token)
-
-#createWISPRportal(host, zoneID, WISPRportalName, WISPRportalURL, token)
-#getWISPRportalID(host, zoneID, WISPRportalName, token)
-#getWISPRportal(host, zoneID, WISPRportalID, token)
-
-#createHS20wlan(host, zoneID, wlanName, ssid, HS20zoneProfileID, token)
-#createWISPRwlan(host, zoneID, wlanName, ssid, passphrase, WISPRportalID, proxyAAAid, token)
-#createWPAwlan(host, zoneID, wlanName, ssid, passphrase, token)
-#getWLANid(host, zoneID, wlanName, token)
-#getWLAN(host, zoneID, wlanID, token)
-
-#createWLANgroup(host, zoneID, WLANgroupName, token)
-#getWLANgroupID(host, zoneID, WLANgroupName, token)
-#addMemberToWlanGroup(host, zoneID, WLANgroupID, wlanID, vlanID, token)
-#removeMemberFromWlanGroup(host, zoneID, defaultWG, wlanID, token)
-
-#createAPgroup(host, zoneID, APgroupName, token)
-#getAPgroupID(host, zoneID, APgroupName,  token)
-
-#deleteAPgroup(host, zoneID, APgroupID, token)
-#deleteWLANgroup(host, zoneID, WLANgroupID, token)
+ 
 #deleteWLAN(host, zoneID, wlanID, token)
 #deleteHS20zoneProfile(host, zoneID, HS20zoneProfileID, token)
 #deleteWISPRportal(host, zoneID, WISPRportalID, token)
@@ -308,42 +261,3 @@ createWifiOperator(host, domainID, operatorName, operatorFriendlyName, operatorD
 createIdentityProvider(host, domainID, identityProviderName, realmName, homeOis, homeOisName, proxyAAAname, token)
 createHS20zoneProfile(host, zoneID, zoneProfileName, wifiOperatorID, identityProviderID, token)
 createHS20wlan(host, zoneID, wlanName, ssid, HS20zoneProfileID, token)
-
-# delete all objects used to create the Hotspot 2.0 wlan
-#getToken(host, username, password)
-#getDomainID(host, domain, token)
-#getZoneID(host, zone, token)
-#getWLANid(host, zoneID, wlanName, token)
-#getHS20zoneProfileID(host, zoneID, zoneProfileName, token)
-#getIdentityProviderID(host, domainID, identityProviderName, token)
-#getWifiOperatorID(host, domainID, operatorName, token)
-#getProxyAAAid(host, parentDomainID, proxyAAAname, token)
-#deleteWLAN(host, zoneID, wlanID, token)
-#deleteHS20zoneProfile(host, zoneID, HS20zoneProfileID, token)
-#deleteIdentityProvider(host, identityProviderID, token)
-#deleteWifiOperator(host, wifiOperatorID, token)
-#deleteProxyAAA(host, proxyAAAid, token)
-#deleteZone(host, zoneID, token)
-#deleteDomain(host, domainID, token)
-
-# create 50 zones with 25 WPA wlans each
-#getToken(host, username, password)
-#getDomainID(host, domain, token) #retrieves domainID and parentDomainID
-#for i in range (0, 49):
-#	zone = "test" + str(i)
-#	createZone(host, domainID, zone, token)
-#	for j in range (0, 24):
-#		wlanName = "test" + str(j)
-#		ssid = wlanName
-#		createWPAwlan(host, zoneID, wlanName, ssid, passphrase, token)
-
-# delete the 50 zones with 25 wlans each
-#getToken(host, username, password)
-#for i in range (0, 49):
-#	zone = "test" + str(i)
-#	getZoneID(host, zone, token)
-#	for j in range (0, 24):
-#		wlanName = "test" + str(j)
-#		getWLANid(host, zoneID, wlanName, token)
-#		deleteWLAN(host, zoneID, wlanID, token)
-#	deleteZone(host, zoneID, token)
