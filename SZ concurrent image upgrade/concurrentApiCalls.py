@@ -221,3 +221,4 @@ elif task == "3":
 # Create variable for image name
 # Add __main__ section
 # Add command line options
+# Add message when there is no uploaded image to verify
