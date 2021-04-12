@@ -32,7 +32,7 @@ def read_csv_file():
 		reader = csv.reader(f)
 		szList = list(reader)
 		for i in szList:
-			szDict = {"url": "https://" + i[0]+ ":8443/wsg/api/public/v8_1/serviceTicket","username":i[1],"password":i[2]}
+			szDict = {"url": "https://" + i[0]+ ":8443/wsg/api/public/v9_0/serviceTicket","username":i[1],"password":i[2]}
 			urlList.append(szDict)
   
 # Define threaded request
@@ -143,14 +143,14 @@ def start_concurrent_task(apiCallType):
 		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 			urlList.clear()
 			for i in tokenList:
-				systemApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/controller?serviceTicket=" + i['token']
+				systemApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/controller?serviceTicket=" + i['token']
 				urlList.append(systemApiCall)
 			executor.map(run_get_api_call, urlList)
 	elif apiCallType == "verifyUploadedImage":
 		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 			urlList.clear()
 			for i in tokenList:
-				verifyUploadedImagesApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/upgrade/patch?serviceTicket=" + i['token']
+				verifyUploadedImagesApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/upgrade/patch?serviceTicket=" + i['token']
 				urlList.append(verifyUploadedImagesApiCall)
 			executor.map(run_get_uploadedImages_call, urlList)
 	elif apiCallType == "uploadImage":
@@ -160,24 +160,24 @@ def start_concurrent_task(apiCallType):
 			print ("Uploading file " + file_path)
 			urlList.clear()
 			for i in tokenList:
-				uploadApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/upgrade/upload?serviceTicket=" + i['token']
+				uploadApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/upgrade/upload?serviceTicket=" + i['token']
 				urlList.append(uploadApiCall)
 			executor.map(run_uploadImage_api_call, urlList)
 			urlList.clear()
 			for i in tokenList:
-				checkStatusApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/upgrade/status?serviceTicket=" + i['token']
+				checkStatusApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/upgrade/status?serviceTicket=" + i['token']
 				urlList.append(checkStatusApiCall)
 			executor.map(checkUploadStatus, urlList)
 	elif apiCallType == "upgradeImage":
 		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 			urlList.clear()
 			for i in tokenList:
-				uploadApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/upgrade?serviceTicket=" + i['token']
+				uploadApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/upgrade?serviceTicket=" + i['token']
 				urlList.append(uploadApiCall)
 			executor.map(run_upgradeImage_api_call, urlList)
 			urlList.clear()
 			for i in tokenList:
-				checkStatusApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v8_1/upgrade/status?serviceTicket=" + i['token']
+				checkStatusApiCall = "https://" + i['ipaddress'] + ":8443/wsg/api/public/v9_0/upgrade/status?serviceTicket=" + i['token']
 				urlList.append(checkStatusApiCall)
 			executor.map(checkUpgradeStatus, urlList)
 
