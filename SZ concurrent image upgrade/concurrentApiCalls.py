@@ -23,6 +23,7 @@ urlList = []
 szList = []
 thread_local = threading.local()
 file_path = ""
+image = "vscg-5.2.2.0.317.ximg"
 
 # read csv file
 def read_csv_file():
@@ -64,16 +65,20 @@ def run_get_api_call(url):
 def run_get_uploadedImages_call(url):
 	global uploadedImageDetailsList
 	session = get_session()
+	#response = ""
 	response = session.get(url, verify=False)
+	success = json.loads(response.content.decode('utf-8'))['clusterOperationProgress']['previousOperationRecord']['success']
 	ipaddr = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', url).group()
-	#print(response.content)
-	uploadedImageDetailsDict = {"ipaddress": ipaddr, "version": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['version'],"controlbladeVersion": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['controlbladeVersion'],"apVersion": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['apVersion']}
+	if success == False:
+		uploadedImageDetailsDict = {"ipaddress": ipaddr, "version": "no image","controlbladeVersion": "no image","apVersion": "no image"}
+	else:
+		uploadedImageDetailsDict = {"ipaddress": ipaddr, "version": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['version'],"controlbladeVersion": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['controlbladeVersion'],"apVersion": json.loads(response.content.decode('utf-8'))['uploadPatchInfo']['apVersion']}
 	uploadedImageDetailsList.append(uploadedImageDetailsDict)
-  
+
 # Upload image call
 def run_uploadImage_api_call(url):
 	session = get_session()
-	files=[('file',('vscg-5.2.2.0.317.ximg',open(file_path,'rb'),'application/octet-stream'))]
+	files=[('file',(image,open(file_path,'rb'),'application/octet-stream'))]
 	response = session.post(url, files=files, verify=False)
  
 # Upgrade image call
@@ -87,12 +92,13 @@ def checkUploadStatus(url):
 	clusterSubTaskState = ""
 	verifyFlag = False
 	ipaddr = re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', url).group()
-	while progress != "90":
+	while progress != "90" and progress != "72":
 		session = get_session()
 		with session.get(url, verify=False) as response:
 			state = json.loads(response.content.decode('utf-8'))['clusterOperationProgress']['bladeProgresss'][0]['state']
 			progress = str(json.loads(response.content.decode('utf-8'))['clusterOperationProgress']['bladeProgresss'][0]['progress'])
 			errorMsg = json.loads(response.content.decode('utf-8'))['clusterOperationProgress']['previousOperationRecord']['errorMsg']
+			#print (state, progress)
 			if state == "":
 				state = "Copying"
 			elif state == "Verifying" or state == "UploadFailed" :
@@ -156,7 +162,7 @@ def start_concurrent_task(apiCallType):
 	elif apiCallType == "uploadImage":
 		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 			script_dir = os.path.dirname(os.path.realpath('__file__'))
-			file_path = os.path.join(script_dir, "vscg-5.2.2.0.317.ximg")
+			file_path = os.path.join(script_dir, image)
 			print ("Uploading file " + file_path)
 			urlList.clear()
 			for i in tokenList:
@@ -195,7 +201,7 @@ for i in sysInfoList:
 	print('{:<15s} {:<6s} {:<20s} {:<6s} {:<6s}'.format(i['ipaddress'],"hostname:",i['hostname'],"version:",i['version']))
 print()
 
-task = input("Do you want to upload the image(1), verify images(2), upgrade(3) or quit(q)? ")
+task = input("Do you want to upload the image(1), verify(2), upgrade(3) or quit(q)? ")
 if task == "1":
 	# Upload image
 	print("Starting upload process")
