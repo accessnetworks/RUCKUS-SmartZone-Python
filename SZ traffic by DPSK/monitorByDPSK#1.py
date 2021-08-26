@@ -2,11 +2,12 @@ import requests
 import warnings
 import sys
 
-HOST = "SZ ip address"
-SZUSER = "SZ username"
-SZPASSWORD = "SZ password"
-ZONE = "Saturn"
-WLAN = "DPSK"
+HOST = "10.0.0.98"
+SZUSER = "admin"
+SZPASSWORD = "ruckus123!"
+ZONE = "Solar System"
+WLAN = "dpsk"
+DPSK = "BatchDPSK_User_4"
 
 from vSZapi import vSZ_calls
 from time import sleep
@@ -14,7 +15,7 @@ warnings.filterwarnings("ignore", message="Unverified HTTPS request")
 mySmartZone = vSZ_calls()
 
 def getTrafficCounters(wlanID, token):
-    wirelessClients = mySmartZone.getWirelessClientsByWlanID(HOST, wlanID, token)
+    wirelessClients = mySmartZone.getWirelessClientsByDpskID(HOST, wlanID, DPSK, token)
     initialClientMacAddress = wirelessClients['list'][0]['clientMac']
     aggregatedTxBytesCounter = wirelessClients['list'][0]['txBytes']
     aggregatedRxBytesCounter = wirelessClients['list'][0]['rxBytes']
@@ -22,28 +23,28 @@ def getTrafficCounters(wlanID, token):
     lastRxBytesCounter = wirelessClients['list'][0]['rxBytes']
     
     while True:
-        wirelessClients = mySmartZone.getWirelessClientsByWlanID(HOST, wlanID, token)
+        wirelessClients = mySmartZone.getWirelessClientsByDpskID(HOST, wlanID, DPSK, token)
         currentClientMacAddress = wirelessClients['list'][0]['clientMac']
         if currentClientMacAddress == initialClientMacAddress:
             aggregatedTxBytesCounter = aggregatedTxBytesCounter + (wirelessClients['list'][0]['txBytes'] - lastTxBytesCounter)
             aggregatedRxBytesCounter = aggregatedRxBytesCounter + (wirelessClients['list'][0]['rxBytes'] - lastRxBytesCounter)
-            print ('{:<16s} {:<18s} {:<8s} {:<8s} {:<9s} {:<10s}'.format(str(wirelessClients['list'][0]['userName']), str(wirelessClients['list'][0]['clientMac']), \
+            print ('{:<16s} {:<18s} {:<10s} {:<10s} {:<10s} {:<10s}'.format(str(wirelessClients['list'][0]['userName']), str(wirelessClients['list'][0]['clientMac']), \
             str(wirelessClients['list'][0]['txBytes']), str(aggregatedTxBytesCounter), str(wirelessClients['list'][0]['rxBytes']), str(aggregatedRxBytesCounter)))
         else:
             aggregatedTxBytesCounter = aggregatedTxBytesCounter + wirelessClients['list'][0]['txBytes']
             aggregatedRxBytesCounter = aggregatedRxBytesCounter + wirelessClients['list'][0]['rxBytes']
-            print ('{:<16s} {:<18s} {:<8s} {:<8s} {:<9s} {:<10s}'.format(str(wirelessClients['list'][0]['userName']), str(wirelessClients['list'][0]['clientMac']), \
+            print ('{:<16s} {:<18s} {:<10s} {:<10s} {:<10s} {:<10s}'.format(str(wirelessClients['list'][0]['userName']), str(wirelessClients['list'][0]['clientMac']), \
             str(wirelessClients['list'][0]['txBytes']), str(aggregatedTxBytesCounter), str(wirelessClients['list'][0]['rxBytes']), str(aggregatedRxBytesCounter)))
             initialClientMacAddress = currentClientMacAddress
         lastTxBytesCounter = wirelessClients['list'][0]['txBytes']
         lastRxBytesCounter = wirelessClients['list'][0]['rxBytes']
-        sleep(30)   
+        sleep(10)   
 
 def main(argv):
     token = mySmartZone.getToken(HOST, SZUSER, SZPASSWORD)
     zoneID = mySmartZone.getZoneID(HOST, ZONE, token)
     wlanID = mySmartZone.getWlanID(HOST, zoneID, WLAN, token)
-    wirelessClients = mySmartZone.getWirelessClientsByWlanID(HOST, wlanID, token)
+    wirelessClients = mySmartZone.getWirelessClientsByDpskID(HOST, wlanID, DPSK, token)
     print ()
     print ('{:<13s} {:<20s}'.format("token: ", token))
     print ('{:<13s} {:<20s}'.format("zone ID: ", zoneID))
@@ -55,7 +56,7 @@ def main(argv):
     print ('{:<13s} {:<20s}'.format("host name: ", str(wirelessClients['list'][0]['hostname'])))
     print ('{:<13s} {:<20s}'.format("device type: ", str(wirelessClients['list'][0]['deviceType'])))
     print ()
-    print ('{:<16s} {:<18s} {:<8s} {:<8s} {:<9s} {:<10s}'.format("DPSK ID", "mac address", "Tx Bytes", "Tx Agg.", "Rx Bytes", "Rx Agg."))
+    print ('{:<16s} {:<18s} {:<10s} {:<10s} {:<10s} {:<10s}'.format("DPSK ID", "mac address", "Tx Bytes", "Tx Agg.", "Rx Bytes", "Rx Agg."))
     getTrafficCounters(wlanID, token) 
     return
 
