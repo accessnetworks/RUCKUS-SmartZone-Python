@@ -1,4 +1,5 @@
 import requests
+import os
 
 class ZD_calls:
 	# Get cookie and CSRF token
@@ -86,6 +87,7 @@ class vSZ_calls:
 		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/rkszones?listSize=500&serviceTicket=" + token
 		r = requests.get(url, verify=False)	
 		return r.json()
+	#	return r
 
 	# Query zone
 	def queryZone(self, host, zoneID, token):
@@ -341,7 +343,7 @@ class vSZ_calls:
 		return wlanID
 
 	# Get wlanID
-	def getWLANid(self, host, zoneID, wlanName, token):
+	def getWlanID(self, host, zoneID, wlanName, token):
 		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/rkszones/" + zoneID + "/wlans?listSize=500&serviceTicket=" + token
 		r = requests.get(url, verify=False)
 		for item in r.json()['list']:
@@ -562,7 +564,167 @@ class vSZ_calls:
 		return r
 
 	# Remove a member from a WLAN group
-	#def removeMemberFromWlanGroup(self, host, zoneID, WLANgroupID, wlanID, token):
-	#	url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/rkszones/" + zoneID + "/wlangroups/" + WLANgroupID + "/members/" + wlanID + "?serviceTicket=" + token
-	#	r = requests.delete(url, verify=False)
-	#	return r
+	def removeMemberFromWlanGroup(self, host, zoneID, WLANgroupID, wlanID, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/rkszones/" + zoneID + "/wlangroups/" + WLANgroupID + "/members/" + wlanID + "?serviceTicket=" + token
+		r = requests.delete(url, verify=False)
+		return r
+
+	# Upload SmartZone firmware
+	def uploadFirmware(self, host, imageFile, token):
+		script_dir = os.path.dirname(os.path.realpath('__file__'))
+		file_path = os.path.join(script_dir, imageFile)
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/upgrade/upload?serviceTicket=" + token
+		payload={}
+		files=[('file',(imageFile, open(file_path,'rb'),'application/octet-stream'))]
+		r = requests.post(url, files=files, verify=False)
+		return r
+
+	# Upgrade SmartZone firmware
+	def upgradeFirmware(self, host, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/upgrade?serviceTicket=" + token
+		r = requests.post(url, verify=False)
+		return r
+
+	# Create client certificate
+	def createClientCertificate(self, host, clientCertificateName, certFile, privateKeyFile, token):
+		script_dir = os.path.dirname(os.path.realpath('__file__'))
+		file_path = os.path.join(script_dir, certFile)
+		with open(file_path, 'r') as f:
+			clientCert = f.read()
+		file_path = os.path.join(script_dir, privateKeyFile)
+		with open(file_path, 'r') as f:
+			privateKey = f.read()
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/clientCert?serviceTicket=" + token
+		body = {
+				"name": clientCertificateName,
+				"data": clientCert,
+				"privateKeyData": privateKey
+			}
+		r = requests.post(url, json = body, verify=False)
+		clientCertID = r.json()['id']
+		return clientCertID
+
+	# Create trust CA certificate
+	def createTrustCaCertificate(self, host, trustCaCertificateName, certFile, token):
+		script_dir = os.path.dirname(os.path.realpath('__file__'))
+		file_path = os.path.join(script_dir, certFile)
+		with open(file_path, 'r') as f:
+			trustCaCert = f.read()
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/trustedCAChainCert?serviceTicket=" + token
+		body = {
+				"name": trustCaCertificateName,
+				"rootCertData": trustCaCert
+			}
+		r = requests.post(url, json = body, verify=False)
+		trustCaCertID = r.json()['id']
+		return trustCaCertID
+
+	# Create Proxy AAA using RADsec
+	def createRADsecProxyAAA(self, host, domainID, proxyAAAname, cnSanIdentity, clientCertID, proxyAAAipAddress, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v10_0/services/auth/radius?serviceTicket=" + token
+		body = {
+				"domainId": domainID,
+				"name": proxyAAAname,
+				"type": "RADIUS",
+				"tlsEnabled": True,
+				"cnSanIdentity": cnSanIdentity,
+				"clientCertId": clientCertID,
+				"locationDeliveryEnabled": False,
+				"primary": {
+					"ip": proxyAAAipAddress,
+					"port": 2083,
+						},
+			}		
+		r = requests.post(url, json = body, verify=False)
+		RADsecProxyAAAid = r.json()['id']
+		return RADsecProxyAAAid
+
+	# Get clientCertID
+	def getClientCertID(self, host, clientCertificateName, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/clientCert?serviceTicket=" + token
+		r = requests.get(url, verify=False)
+		for item in r.json()['list']:
+			if item['name'] == clientCertificateName:
+				clientCertID = item['id']
+				return clientCertID
+
+	# Get trustCaCertID
+	def getTrustCaCertID(self, host, trustCaCertificateName, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/trustedCAChainCert?serviceTicket=" + token
+		r = requests.get(url, verify=False)	
+		for item in r.json()['list']:
+			if item['name'] == trustCaCertificateName:
+				trustCaCertID = item['id']
+				return trustCaCertID
+
+	# Get RADsecProxyAAAid
+	def getRADSecProxyAAAid(self, host, domainID, RADSecProxyAAAname, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/services/auth/query?serviceTicket=" + token
+		body = {
+				"filters": [
+					{
+					"type": "DOMAIN",
+					"value": domainID
+					}
+				],
+				"page": 1,
+				"limit": 8
+				}
+		r = requests.post(url, json = body, verify=False)
+		for item in r.json()['list']:
+			if item['name'] == RADSecProxyAAAname:
+				RADsecProxyAAAid = item['id']
+				return RADsecProxyAAAid
+
+	# Delete Proxy AAA using RADsec
+	def deleteRADsecProxyAAA(self, host, RADsecProxyAAAid, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/services/auth/radius/" +  RADsecProxyAAAid + "?serviceTicket=" + token
+		r = requests.delete(url, verify=False)
+		return r
+
+	# Delete client certificate
+	def deleteteClientCertificate(self, host, clientCertID, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/clientCert/" +  clientCertID + "?serviceTicket=" + token
+		r = requests.delete(url, verify=False)
+		return r
+
+	# Delete trust CA certificate
+	def deleteteTrustCaCertificate(self, host, trustCaCertID, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/certstore/trustedCAChainCert/" +  trustCaCertID + "?serviceTicket=" + token
+		r = requests.delete(url, verify=False)
+		return r
+
+	# Get wireless clients by wlanID
+	def getWirelessClientsByWlanID(self, host, wlanID, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/query/client?serviceTicket=" + token
+		body = {
+			"filters": [
+				{
+					"type": "WLAN",
+					"value": wlanID
+				}
+			]
+		}
+		r = requests.post(url, json = body, verify=False)
+		wirelessClients = r.json()
+		return wirelessClients
+
+	# Get wireless clients by DPSK ID
+	def getWirelessClientsByDpskID(self, host, wlanID, dpskID, token):
+		url = "https://" + host + ":8443" + "/wsg/api/public/v9_0/query/client?serviceTicket=" + token
+		body = {
+			"filters": [
+				{
+					"type": "WLAN",
+					"value": wlanID
+				}
+			],
+		"fullTextSearch":
+		{
+			"type": "AND",
+			"value": dpskID
+		}
+		}
+		r = requests.post(url, json = body, verify=False)
+		wirelessClients = r.json()
+		return wirelessClients
