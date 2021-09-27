@@ -54,7 +54,7 @@ class vSZ_calls:
 				"domainId": domainID,
 				"name": zone,
 				"description": "",
-				"countryCode": "BE",
+				"countryCode": "US",
 				"timezone": {
 				"customizedTimezone": {
 					"abbreviation": "TPE",
