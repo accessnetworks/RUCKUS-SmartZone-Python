@@ -2,9 +2,9 @@ import csv
 from SmartZone_API_calls import SZ_API_calls
 SmartZone = SZ_API_calls()
 
-SZADDRESS = "10.0.0.207" # SmartZone IP address
+SZADDRESS = "<ip address>" # SmartZone IP address
 SZUSER = "admin" # SmartZone user
-SZPASSWORD = "ruckus123!" # SmartZone password
+SZPASSWORD = "password" # SmartZone password
 ROGUESFILE = "rogue_list.csv" # .csv file with rogue device mac addresses
 
 knownList = []
