@@ -48,22 +48,16 @@ print("connecting to broker")
 client.connect(broker_address)
 client.subscribe("#") #subscribe to all topics
 
-#payload = struct.pack('bb', 1,1) #get controller information
-#client.publish("3.0/LOC/marcelommolinari/LS/MGQ",payload, 2)
+payload = struct.pack('bb', 1,1) #get controller information
+client.publish("3.0/LOC/lbstest/LS/MGQ",payload, 2)
 
-#payload = struct.pack('bb', 1,7) #get venues
-#client.publish("3.0/LOC/marcelommolinari/LS/MGQ",payload, 2)
+payload = struct.pack('bb', 1,7) #get venues
+client.publish("3.0/LOC/lbstest/LS/MGQ",payload, 2)
 
-#payload = struct.pack('bbbbbbbbbbbbbbbbbbbb',1,2,0,16,0x6d,0x61,0x72,0x63,0x65,0x6c,0x6f,0x6d,0x6d,0x6f,0x6c,0x69,0x6e,0x61,0x72,0x69) #get AP per venues
-#client.publish("3.0/LOC/marcelommolinari/LS/MGQ",payload, 2)
+payload = struct.pack('bbbbbbbbbbb',3,1,0,7,10,0,10,1,0,0,0) #sent PAQ request for 2.4 GHz radio
+client.publish("3.0/LOC/lbstest/LS/PAQ",payload, 2)
 
-#payload = struct.pack('bbbbbbbbbbb',3,1,0,7,10,0,10,1,0,0,0) #sent PAQ request
-#client.publish("3.0/LOC/marcelommolinari/LS/PAQ",payload, 2)
-
-#payload = struct.pack('bbbbbbbbbbb',3,1,0,7,10,0,10,2,0,0,0) #sent PAQ request
-#client.publish("3.0/LOC/marcelo/LS/PAQ",payload, 2)
-
-payload = struct.pack('bbbbbbbbbbb',3,1,0,7,10,0,10,3,0,0,0) #sent PAQ request
-client.publish("3.0/LOC/marcelo/LS/PAQ",payload, 2)
+payload = struct.pack('bbbbbbbbbbb',3,1,0,7,10,0,10,2,0,0,0) #sent PAQ request for 5 GHz radio
+client.publish("3.0/LOC/lbstest/LS/PAQ",payload, 2)
 
 client.loop_forever() #starts a thread on the mqtt client which reads the message buffers forever
